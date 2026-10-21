@@ -1,0 +1,479 @@
+ <!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Merry Christmas, Manita/Manito</title>
+<link href="https://fonts.googleapis.com/css2?family=Anonymous+Pro:wght@400;700&family=Gaegu:wght@400;700&family=Pinyon+Script&family=Rubik+Mono+One&display=swap" rel="stylesheet">
+
+<style>
+/* ==========================================================
+   CONTENTS
+   1. Colors and page basics
+   2. Decorations (lights, leaves, tree)
+   3. Buttons (HOME / NEXT / PREV)
+   4. Slide 1: Home
+   5. Slide 2: Letter
+   6. Slide 3: Wishlist
+   7. Slide 4: Thank you
+   ========================================================== */
+
+/* ---------- 1. COLORS AND PAGE BASICS ---------- */
+:root {
+  --top: #0b5a3b;      /* background, top */
+  --bottom: #0a2a1d;   /* background, bottom */
+  --sage: #c7d2b4;     /* script titles */
+  --pill: #cbd8c0;     /* light pill buttons */
+  --ink: #12402b;      /* dark green text */
+  --text: #eef3e7;     /* letter text */
+  color-scheme: dark;
+}
+* { box-sizing: border-box; }
+html { background: var(--bottom); }
+body {
+  margin: 0;
+  min-height: 100vh;
+  background: linear-gradient(var(--top), var(--bottom)) fixed;
+  color: var(--text);
+  font-family: 'Anonymous Pro', 'Courier New', monospace;
+}
+:focus-visible { outline: 3px solid #e8b923; outline-offset: 2px; }
+
+/* Each page is a "slide". Only one shows at a time. */
+.slide {
+  display: none;
+  position: relative;
+  z-index: 2;
+  min-height: 100vh;
+  flex-direction: column;
+  padding: calc(130px + env(safe-area-inset-top, 0px)) 7vw 190px;
+}
+.slide.on { display: flex; }
+
+
+/* ---------- 2. DECORATIONS ---------- */
+.deco { position: fixed; left: 0; width: 100%; pointer-events: none; }
+#gar { top: env(safe-area-inset-top, 0px); height: 125px; z-index: 1; }
+#fol { bottom: 0; height: 125px; z-index: 3; }
+
+/* Small tree in the bottom-right corner (hidden on the home slide) */
+.corner { position: fixed; right: 0; bottom: 70px; width: min(20vw, 150px); height: auto; z-index: 4; pointer-events: none; }
+body[data-s="home"] .corner { display: none; }
+
+
+/* ---------- 3. BUTTONS ---------- */
+.nav {
+  position: fixed;
+  left: 1.1rem;
+  bottom: calc(135px + env(safe-area-inset-bottom, 0px));
+  display: flex;
+  gap: 0.8rem;
+  z-index: 5;
+}
+.btn {
+  font-family: 'Anonymous Pro', monospace;
+  font-size: 1.2rem;
+  color: #fff;
+  text-decoration: underline;
+  background: rgba(255, 255, 255, 0.14);
+  border: 0;
+  border-radius: 999px;
+  padding: 0.5rem 1.4rem;
+  cursor: pointer;
+}
+.btn:hover { background: rgba(255, 255, 255, 0.26); }
+
+
+/* ---------- 4. SLIDE 1: HOME ---------- */
+.big {
+  font-family: 'Rubik Mono One', Impact, sans-serif;
+  font-size: clamp(2.2rem, 10vw, 7.5rem);
+  line-height: 1;
+  margin: 0;
+}
+.merry { color: #bdbdbd; align-self: flex-start; }
+.xmas  { color: rgba(190, 190, 190, 0.62); align-self: flex-end; position: relative; z-index: 3; margin-top: -5.4rem; }
+.hometree { width: min(58vw, 340px); height: auto; align-self: center; margin-top: -3.5rem; position: relative; z-index: 2; }
+.pill {
+  align-self: flex-start;
+  margin-top: 0.2rem;
+  font-family: 'Anonymous Pro', monospace;
+  font-size: 1.3rem;
+  color: var(--ink);
+  text-decoration: underline;
+  background: var(--pill);
+  border: 0;
+  border-radius: 999px;
+  padding: 0.7rem 1.7rem;
+  cursor: pointer;
+}
+
+
+/* ---------- 5. SLIDE 2: LETTER ---------- */
+.letter { max-width: 1100px; margin: 0 auto; font-size: clamp(1.05rem, 2.3vw, 1.4rem); line-height: 1.6; }
+.letter p { margin: 0 0 1.3em; }
+
+/* Blinking cursor shown while the letter is being typed */
+.letter p.typing::after { content: "▍"; margin-left: 2px; animation: blink 1s steps(1) infinite; }
+@keyframes blink { 50% { opacity: 0; } }
+
+
+/* ---------- 6. SLIDE 3: WISHLIST ---------- */
+.script {
+  font-family: 'Pinyon Script', cursive;
+  color: var(--sage);
+  font-weight: 400;
+  text-align: center;
+  margin: 0;
+  line-height: 1.1;
+}
+.wishtitle { font-size: clamp(3rem, 10vw, 5.5rem); margin-bottom: 1.6rem; }
+
+.grid {
+  list-style: none;
+  margin: 0 auto;
+  padding: 0;
+  width: 100%;
+  max-width: 1050px;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(210px, 1fr));
+  gap: 1rem 2rem;
+}
+.grid li {
+  font-family: 'Gaegu', cursive;
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: var(--ink);
+  text-align: center;
+  line-height: 1.2;
+  padding: 0.7rem 1rem;
+  border-radius: 999px;
+  background: linear-gradient(#c3d0b8, #8ea690);
+}
+
+
+/* ---------- 7. SLIDE 4: THANK YOU ---------- */
+.thanks { justify-content: center; }
+.thanks .script { font-size: clamp(3rem, 11vw, 6.5rem); }
+
+
+/* ---------- 8. INTRO SCREEN (the hopping button) ---------- */
+.intro {
+  position: fixed;
+  inset: 0;
+  z-index: 50;
+  background: linear-gradient(var(--top), var(--bottom));
+  overflow: hidden;
+  transition: opacity 0.6s;          /* fade out at the end */
+}
+.intro.out { opacity: 0; pointer-events: none; }
+#gar2 { top: env(safe-area-inset-top, 0px); height: 125px; }
+#fol2 { bottom: 0; height: 125px; }
+
+/* The question */
+.intro p {
+  position: absolute;
+  top: 28%; left: 0; right: 0;
+  margin: 0 auto;
+  padding: 0 1.5rem;
+  max-width: 18ch;
+  text-align: center;
+  font-family: 'Pinyon Script', cursive;
+  color: var(--sage);
+  font-size: clamp(2.4rem, 9vw, 3.6rem);
+  line-height: 1.1;
+}
+
+/* The button that hops around. left/top are changed by the script on every tap. */
+#go {
+  position: absolute;
+  left: 50%;
+  top: 60%;
+  transform: translate(-50%, -50%);
+  font-family: 'Anonymous Pro', monospace;
+  font-size: 1.25rem;
+  color: var(--ink);
+  background: var(--pill);
+  border: 0;
+  border-radius: 999px;
+  padding: 0.8rem 1.7rem;
+  cursor: pointer;
+  white-space: nowrap;
+  transition: left 0.45s cubic-bezier(.3, 1.4, .5, 1),
+              top 0.45s cubic-bezier(.3, 1.4, .5, 1);   /* bouncy hop */
+}
+#go:hover { filter: brightness(1.06); }
+@media (prefers-reduced-motion: reduce) { #go, .intro { transition: none; } }
+</style>
+</head>
+
+
+<body data-s="home">
+
+<!-- ==========================================================
+     INTRO SCREEN: the question and the hopping button
+     ========================================================== -->
+<div class="intro" id="intro">
+  <svg id="gar2" class="deco" viewBox="0 0 1400 100" preserveAspectRatio="xMidYMin slice" aria-hidden="true"></svg>
+  <svg id="fol2" class="deco" viewBox="0 0 1400 110" preserveAspectRatio="xMidYMax slice" aria-hidden="true"></svg>
+  <p id="msg">Psst… want to know what’s on my Christmas wishlist?</p>
+  <button id="go">What’s my wishlist?</button>
+</div>
+
+<!-- Shared drawings (the tree is reused in 2 places) -->
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <symbol id="tree" viewBox="0 0 200 262">
+    <rect x="92" y="226" width="16" height="34" fill="#7a5230"/>
+    <polygon points="100,28 152,102 48,102" fill="#9cc79a"/>
+    <polygon points="100,68 172,162 28,162" fill="#74ad7f"/>
+    <polygon points="100,120 192,228 8,228" fill="#4f9066"/>
+    <polygon points="100,2 106,16 122,16 109,26 114,42 100,33 86,42 91,26 78,16 94,16" fill="#d9262c"/>
+    <g fill="#d93a3a">
+      <circle cx="96" cy="78" r="6"/><circle cx="122" cy="118" r="6"/><circle cx="78" cy="132" r="6"/>
+      <circle cx="108" cy="168" r="7"/><circle cx="62" cy="190" r="6"/><circle cx="146" cy="196" r="6"/>
+      <circle cx="100" cy="212" r="6"/>
+    </g>
+  </symbol>
+</svg>
+
+<!-- Top string of lights and bottom leaves (drawn by the script below) -->
+<svg id="gar" class="deco" viewBox="0 0 1400 100" preserveAspectRatio="xMidYMin slice" aria-hidden="true"></svg>
+<svg id="fol" class="deco" viewBox="0 0 1400 110" preserveAspectRatio="xMidYMax slice" aria-hidden="true"></svg>
+<svg class="corner" viewBox="0 0 200 262" aria-hidden="true"><use href="#tree"/></svg>
+
+
+<!-- ==========================================================
+     SLIDE 1: HOME
+     ========================================================== -->
+<section class="slide home on" id="home">
+  <h1 class="big merry">MERRY</h1>
+  <svg class="hometree" viewBox="0 0 200 262" aria-hidden="true"><use href="#tree"/></svg>
+  <div class="big xmas">CHRISTMAS</div>
+  <button class="pill" data-go="letter">MANITA/MANITO</button>
+</section>
+
+
+<!-- ==========================================================
+     SLIDE 2: THE LETTER
+     ========================================================== -->
+<section class="slide" id="letter">
+  <div class="letter">
+    <p>Dear Manita/Manito,</p>
+    <p>I, the receiver of the gift, would like to receive something that I truly want and will enjoy using. You may choose at least three (3) gifts from the items I like, depending on your choice and budget. Any gift you give will be greatly appreciated because what matters most is the thought, effort, and kindness behind it.</p>
+    <p>You are free to choose whichever gift you think is best for me. I will be happy and thankful for whatever you give, as long as it comes from the heart. Thank you for taking the time to choose a gift for me. I am already excited and looking forward to receiving your thoughtful surprise.</p>
+    <p>Thank you, and be well!</p>
+  </div>
+  <div class="nav">
+    <button class="btn" data-go="home">HOME</button>
+    <button class="btn" data-go="wish">NEXT</button>
+  </div>
+</section>
+
+
+<!-- ==========================================================
+     SLIDE 3: MY WISHLIST
+     To change an item, edit the text inside a <li>.
+     ========================================================== -->
+<section class="slide" id="wish">
+  <h2 class="script wishtitle">My Wishlist</h2>
+  <p> <i> You can find these on TikTok Shop or Shopee. I hope you’re not tired of what I’m doing right now because I feel like it’s such a hassle and hope I haven’t wasted your time. Thanks to Claude for helping me identify the error on my website. UwU. ♡ </i> </p>
+  <ul class="grid">
+    <li>Fountain Pen with refills <a href="https://shop.tiktok.com/ph/pdp/1730617250067089288?_t=ZS-9AjJjtIh0lB" data-id="12345" data-category="link">link</a>
+    <li>Deli EEG667-PR Black n Blue <a href="https://shop.tiktok.com/ph/pdp/1731733336884676194?_t=ZS-9AjJmDQwQfF" data-id="12345" data-category="link">link</a></li>
+    <li>Pastel Inhaler Lemongrass <a href="https://shop.tiktok.com/ph/pdp/1730775954180376925?_t=ZS-9AjJlaOpCY1" data-id="12345" data-category="link">link</a> </li>
+    <li>Pilot BP-145-Red refill</li>
+    <li>Pilot frixion 0.5mm refill</li>
+    <li>Phone lanyard green <a href="https://shop.tiktok.com/ph/pdp/1732997308242822380?_t=ZS-9AjJnVnhzdM" data-id="12345" data-category="link">link</a> </li>
+    <li>1 rim cactus a4 bondpaper</li>
+    <li>Yellow papers(1pad)</li>
+    <li>Hair accessories</li>
+    <li>Journal notebook green</li>
+    <li>Wallet color green</li>
+    <li>Anik-anik color green</li>
+  </ul>
+  <div class="nav">
+    <button class="btn" data-go="letter">PREV</button>
+    <button class="btn" data-go="thanks">NEXT</button>
+  </div>
+</section>
+
+
+<!-- ==========================================================
+     SLIDE 4: THANK YOU
+     ========================================================== -->
+<section class="slide thanks" id="thanks">
+  <h2 class="script">Thank You and<br>God Bless You!</h2>
+  <div class="nav">
+    <button class="btn" data-go="home">HOME</button>
+  </div>
+</section>
+
+
+<script>
+/* ==========================================================
+   CONTENTS
+   1. Draw the string of lights
+   2. Draw the leaves, berries and pinecones
+   3. Switch between slides
+   ========================================================== */
+
+/* A repeatable "random" number so the leaves look the same every time */
+function rnd(n) { var s = Math.sin(n * 9301 + 49297) * 233280; return s - Math.floor(s); }
+
+
+/* ---------- 1. STRING OF LIGHTS ---------- */
+function lights() {
+  var W = 1400, colors = ["#d9304a", "#1f8a76", "#e8b923", "#235a97"], out = "";
+  [[16, 0], [58, 1.7]].forEach(function (row, r) {       // two wavy strings
+    var d = "", x, y, i = 0;
+    for (x = 0; x <= W; x += 10) {
+      y = row[0] + 13 * Math.sin(x / 70 + row[1]);
+      d += (x ? "L" : "M") + x + "," + y.toFixed(1);
+    }
+    out += '<path d="' + d + '" fill="none" stroke="#555" stroke-width="2.5"/>';
+    for (x = 40 + r * 30; x < W; x += 78, i++) {          // bulbs along the string
+      y = row[0] + 13 * Math.sin(x / 70 + row[1]);
+      out += '<g transform="translate(' + x + ',' + y.toFixed(1) + ')">' +
+        '<rect x="-4" y="0" width="8" height="9" fill="#333"/>' +
+        '<ellipse cx="0" cy="22" rx="9" ry="14" fill="' + colors[(i + r * 2) % 4] + '"/>' +
+        '<ellipse cx="-3" cy="17" rx="2.5" ry="5" fill="#fff" opacity=".35"/></g>';
+    }
+  });
+  return out;
+}
+document.getElementById("gar").innerHTML = lights();
+
+
+/* ---------- 2. LEAVES, BERRIES, PINECONES ---------- */
+function leaves() {
+  var greens = ["#2f6b3a", "#3d7f4a", "#1f4d33", "#5a8f5a"], out = "", i, x, y;
+  for (i = 0; i < 150; i++) {                              // leaves
+    x = rnd(i) * 1400; y = 45 + rnd(i + 300) * 50;
+    out += '<ellipse cx="' + x.toFixed(0) + '" cy="' + y.toFixed(0) + '" rx="5" ry="18" fill="' + greens[i % 4] +
+           '" transform="rotate(' + (-80 + rnd(i + 600) * 160).toFixed(0) + ' ' + x.toFixed(0) + ' ' + y.toFixed(0) + ')"/>';
+  }
+  for (i = 0; i < 90; i++) {                               // red berries
+    out += '<circle cx="' + (rnd(i + 900) * 1400).toFixed(0) + '" cy="' + (22 + rnd(i + 1200) * 55).toFixed(0) + '" r="3.5" fill="#d93a3a"/>';
+  }
+  for (i = 0; i < 9; i++) {                                // pinecones
+    out += '<ellipse cx="' + (40 + i * 160) + '" cy="92" rx="15" ry="17" fill="#e7dccb" stroke="#7a5b3f" stroke-width="2"/>';
+  }
+  return out;
+}
+document.getElementById("fol").innerHTML = leaves();
+
+
+/* ---------- 3. SWITCH BETWEEN SLIDES ----------
+   Every button has data-go="slide-name". */
+/* ---------- TYPING EFFECT FOR THE LETTER ----------
+   The letter types itself out, one letter at a time, when the page opens.
+   Tap or click the letter to show all of it right away.
+   typingSpeed = milliseconds per letter (smaller = faster). */
+var typingSpeed = 28;
+var typingTimer;
+var letterParas = document.querySelectorAll("#letter .letter p");
+
+function finishLetter() {                       // show everything, stop typing
+  clearTimeout(typingTimer);
+  letterParas.forEach(function (p) {
+    p.textContent = p.dataset.full;
+    p.classList.remove("typing");
+  });
+}
+
+function typeLetter() {
+  clearTimeout(typingTimer);
+  letterParas.forEach(function (p) {
+    if (!p.dataset.full) p.dataset.full = p.textContent;   // remember the full text
+  });
+
+  // Skip the animation for people who prefer less motion
+  if (matchMedia("(prefers-reduced-motion: reduce)").matches) { finishLetter(); return; }
+
+  letterParas.forEach(function (p) { p.textContent = ""; p.classList.remove("typing"); });
+  var para = 0, chars = 0;
+
+  function tick() {
+    letterParas.forEach(function (p) { p.classList.remove("typing"); });
+    if (para >= letterParas.length) return;               // all done
+    var p = letterParas[para], full = p.dataset.full;
+    p.classList.add("typing");                            // show the cursor here
+    chars++;
+    p.textContent = full.slice(0, chars);
+    if (chars >= full.length) {                           // paragraph finished
+      para++; chars = 0;
+      typingTimer = setTimeout(tick, 450);                // short pause between paragraphs
+    } else {
+      var pause = /[.,!?]/.test(full[chars - 1]) ? 180 : typingSpeed;   // pause a bit at punctuation
+      typingTimer = setTimeout(tick, pause);
+    }
+  }
+  tick();
+}
+document.querySelector("#letter .letter").onclick = finishLetter;
+
+
+function show(name) {
+  var target = document.getElementById(name);
+  if (!target || !target.classList.contains("slide")) name = "home";
+  document.querySelectorAll(".slide").forEach(function (s) {
+    s.classList.toggle("on", s.id === name);
+  });
+  document.body.setAttribute("data-s", name);
+  window.scrollTo(0, 0);
+  if (name === "letter") typeLetter();      // start the typing effect
+}
+
+document.querySelectorAll("[data-go]").forEach(function (b) {
+  b.onclick = function () { show(b.getAttribute("data-go")); };
+});
+
+show(location.hash.replace("#", "") || "home");
+
+
+/* ---------- 4. THE HOPPING BUTTON (intro screen) ----------
+   m = text on the screen, b = text on the button.
+   The button hops once per step. After the last tap, the intro fades away. */
+var steps = [
+  { m: "Psst… want to know what’s on my Christmas wishlist?", b: "What’s my wishlist?" },
+  { m: "Oops, it slipped away! Catch it again.",              b: "Catch me!" },
+  { m: "So close. Keep tapping.",                             b: "Over here!" },
+  { m: "Santa says patience is a virtue.",                    b: "Almost there…" },
+  { m: "Last one, I promise!",                                b: "Show me the list" }
+];
+var step = 0;
+var intro = document.getElementById("intro");
+var go    = document.getElementById("go");
+var msg   = document.getElementById("msg");
+
+document.getElementById("gar2").innerHTML = lights();    // decorations for the intro
+document.getElementById("fol2").innerHTML = leaves();
+
+function between(min, max) { return min + Math.random() * (max - min); }
+
+/* Skip the intro if someone opens a direct link like ...#wish */
+if (location.hash && location.hash !== "#home") intro.style.display = "none";
+
+go.onclick = function () {
+  step++;
+
+  // Last tap: fade the intro away and show the home page
+  if (step >= steps.length) {
+    intro.classList.add("out");
+    setTimeout(function () { intro.style.display = "none"; }, 650);
+    return;
+  }
+
+  // Otherwise: change the texts...
+  msg.textContent = steps[step].m;
+  go.textContent  = steps[step].b;
+
+  // ...and move the button to a random spot (kept inside the screen)
+  var halfW = go.offsetWidth / 2 + 14;
+  var halfH = go.offsetHeight / 2 + 14;
+  go.style.left = between(halfW, innerWidth - halfW) + "px";
+  go.style.top  = between(Math.max(innerHeight * 0.42, halfH), innerHeight - halfH - 130) + "px";
+};
+</script>
+</body>
+</html>
